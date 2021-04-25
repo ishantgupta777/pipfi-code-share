@@ -5,4 +5,3 @@ const app = new SharedLinks_svelte_1.default({
     target: document.body,
 });
 exports.default = app;
-//# sourceMappingURL=SharedLinks.js.map
