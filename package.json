@@ -11,7 +11,9 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:pipfi--code-share-.shareCode"
+		"onCommand:pipfi--code-share-.shareCode",
+		"onCommand:pipfi--code-share-.shareSelectedCode",
+		"onCommand:pipfi--code-share-.sharedLinks"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -25,20 +27,25 @@
 				"command": "pipfi--code-share-.shareSelectedCode",
 				"category": "pipfi (share code)",
 				"title": "Share selected code using p.ip.fi"
+			},
+			{
+				"command": "pipfi--code-share-.sharedLinks",
+				"category": "pipfi (share code)",
+				"title": "See saved pipfi links"
 			}
 		],
 		"menus": {
-      "editor/context": [
-        {
-          "command": "pipfi--code-share-.shareCode",
-          "group": "z_commands"
-        },
+			"editor/context": [
 				{
-          "command": "pipfi--code-share-.shareSelectedCode",
-          "group": "z_commands"
-        }
-      ]
-    }
+					"command": "pipfi--code-share-.shareCode",
+					"group": "z_commands"
+				},
+				{
+					"command": "pipfi--code-share-.shareSelectedCode",
+					"group": "z_commands"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -46,9 +53,14 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
+		"rollup": "rollup -c -w",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
+		"@rollup/plugin-commonjs": "^18.0.0",
+		"@rollup/plugin-node-resolve": "^11.2.1",
+		"@rollup/plugin-typescript": "^8.2.1",
+		"@tsconfig/svelte": "^1.0.10",
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.0.4",
 		"@types/node": "^12.11.7",
@@ -58,6 +70,12 @@
 		"eslint": "^7.19.0",
 		"glob": "^7.1.6",
 		"mocha": "^8.2.1",
+		"rollup": "^2.45.2",
+		"rollup-plugin-svelte": "^7.1.0",
+		"rollup-plugin-terser": "^7.0.2",
+		"svelte": "^3.37.0",
+		"svelte-check": "^1.5.1",
+		"svelte-preprocess": "^4.7.2",
 		"typescript": "^4.1.3",
 		"vscode-test": "^1.5.0"
 	},

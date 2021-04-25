@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
+import SharedLinksPanel from './sharedLinks';
 const FormData = require('form-data');
 
 const OPEN_URL_OPTION = 'Open URL';
@@ -42,6 +43,11 @@ export function activate(context: vscode.ExtensionContext) {
 		const documentText = document.getText(selection);
 		pipfiApiCall(documentText);
 	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.sharedLinks',async ()=>{
+		SharedLinksPanel.createOrShow(context.extensionUri);
+	}));
+
 }
 
 // this method is called when your extension is deactivated
