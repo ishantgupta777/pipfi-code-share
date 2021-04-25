@@ -13,7 +13,8 @@
 	"activationEvents": [
 		"onCommand:pipfi--code-share-.shareCode",
 		"onCommand:pipfi--code-share-.shareSelectedCode",
-		"onCommand:pipfi--code-share-.sharedLinks"
+		"onCommand:pipfi--code-share-.sharedLinks",
+		"onCommand:pipfi--code-share-.refreshWebView"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -32,6 +33,11 @@
 				"command": "pipfi--code-share-.sharedLinks",
 				"category": "pipfi (share code)",
 				"title": "See saved pipfi links"
+			},
+			{
+				"command": "pipfi--code-share-.refreshWebView",
+				"category": "pipfi (share code)",
+				"title": "Refresh Webview"
 			}
 		],
 		"menus": {

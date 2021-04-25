@@ -48,6 +48,11 @@ export function activate(context: vscode.ExtensionContext) {
 		SharedLinksPanel.createOrShow(context.extensionUri);
 	}));
 
+	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.refreshWebView',async ()=>{
+		SharedLinksPanel.kill();
+		SharedLinksPanel.createOrShow(context.extensionUri);
+	}));
+
 }
 
 // this method is called when your extension is deactivated

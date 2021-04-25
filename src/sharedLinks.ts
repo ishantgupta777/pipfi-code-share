@@ -54,6 +54,11 @@ class SharedLinksPanel {
 		SharedLinksPanel.currentPanel = new SharedLinksPanel(panel, extensionUri);
 	}
 
+	public static kill() {
+    SharedLinksPanel.currentPanel?.dispose();
+    SharedLinksPanel.currentPanel = undefined;
+  }
+
 	private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
 		this._panel = panel;
 		this._extensionUri = extensionUri;
