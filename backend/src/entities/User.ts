@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Todo } from "./Todo";
+import { PipfiUrl } from "./PipfiUrl";
 
 @Entity()
 export class User extends BaseEntity {
@@ -15,9 +15,18 @@ export class User extends BaseEntity {
   @Column("text", { nullable: true })
   name: string;
 
+  @Column("text", { nullable: true })
+  githubUserName: string;
+
   @Column("text", { unique: true })
   githubId: string;
 
-  @OneToMany(() => Todo, (t) => t.creator)
-  todos: Promise<Todo[]>;
+  @Column("text", { nullable: true })
+  avatarUrl: string;
+
+  @Column("text", { nullable: true })
+  email: string;
+
+  @OneToMany(() => PipfiUrl, (t) => t.owner)
+  pipfiUrls: Promise<PipfiUrl[]>;
 }

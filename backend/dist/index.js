@@ -15,49 +15,45 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 require("dotenv-safe").config();
 const express_1 = __importDefault(require("express"));
-const typeorm_1 = require("typeorm");
-const constants_1 = require("./constants");
-const path_1 = require("path");
 const User_1 = require("./entities/User");
 const passport_github_1 = require("passport-github");
 const passport_1 = __importDefault(require("passport"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cors_1 = __importDefault(require("cors"));
-const Todo_1 = require("./entities/Todo");
+const PipfiUrl_1 = require("./entities/PipfiUrl");
 const isAuth_1 = require("./isAuth");
+const db_1 = __importDefault(require("./db"));
+const app = express_1.default();
+app.use(cors_1.default({ origin: "*" }));
+app.use(passport_1.default.initialize());
+app.use(express_1.default.json());
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield typeorm_1.createConnection({
-        type: "postgres",
-        database: "pipfi",
-        entities: [path_1.join(__dirname, "./entities/*.*")],
-        username: process.env.USERNAME || 'postgres',
-        password: process.env.PASSWORD || 'postgres',
-        port: 5432,
-        host: 'postgres',
-        logging: !constants_1.__prod__,
-        synchronize: !constants_1.__prod__,
-    });
-    const app = express_1.default();
+    yield db_1.default();
     passport_1.default.serializeUser((user, done) => {
         done(null, user.accessToken);
     });
-    app.use(cors_1.default({ origin: "*" }));
-    app.use(passport_1.default.initialize());
-    app.use(express_1.default.json());
     passport_1.default.use(new passport_github_1.Strategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: "http://localhost:3000/auth/github/callback",
     }, (_, __, profile, cb) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log(profile._json, profile.displayName, profile.emails, profile.id, profile.profileUrl, profile.username, profile.photos);
         let user = yield User_1.User.findOne({ where: { githubId: profile.id } });
         if (user) {
             user.name = profile.displayName;
+            user.githubUserName = profile.username || "";
+            user.avatarUrl = profile.photos ? profile.photos[0].value : "";
+            user.email = (profile === null || profile === void 0 ? void 0 : profile.emails) ? profile.emails[0].value : "";
+            user.githubId = profile.id;
             yield user.save();
         }
         else {
             user = yield User_1.User.create({
                 name: profile.displayName,
                 githubId: profile.id,
+                githubUserName: profile.username,
+                avatarUrl: profile.photos ? profile.photos[0].value : "",
+                email: (profile === null || profile === void 0 ? void 0 : profile.emails) ? profile.emails[0].value : ""
             }).save();
         }
         cb(null, {
@@ -68,34 +64,39 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     })));
     app.get("/auth/github", passport_1.default.authenticate("github", { session: false }));
     app.get("/auth/github/callback", passport_1.default.authenticate("github", { session: false }), (req, res) => {
-        res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+        res.redirect(`http://localhost:54331/auth/${req.user.accessToken}`);
     });
-    app.get("/todo", isAuth_1.isAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const todos = yield Todo_1.Todo.find({
-            where: { creatorId: req.userId },
+    app.get("/links", isAuth_1.isAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const links = yield PipfiUrl_1.PipfiUrl.find({
+            where: { ownerId: req.userId },
             order: { id: "DESC" },
         });
-        res.send({ todos });
+        res.send({ links });
     }));
-    app.post("/todo", isAuth_1.isAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const todo = yield Todo_1.Todo.create({
-            text: req.body.text,
-            creatorId: req.userId,
+    app.post("/addLink", isAuth_1.isAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const link = yield PipfiUrl_1.PipfiUrl.create({
+            title: req.body.title,
+            description: req.body.description,
+            ownerId: req.userId,
+            url: req.body.url
         }).save();
-        res.send({ todo });
+        res.send({ link });
     }));
-    app.put("/todo", isAuth_1.isAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const todo = yield Todo_1.Todo.findOne(req.body.id);
-        if (!todo) {
-            res.send({ todo: null });
+    app.put("/updateLink", isAuth_1.isAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const link = yield PipfiUrl_1.PipfiUrl.findOne(req.body.id);
+        if (!link) {
+            res.send({ link: null });
             return;
         }
-        if (todo.creatorId !== req.userId) {
+        if (link.ownerId !== req.userId) {
             throw new Error("not authorized");
         }
-        todo.completed = !todo.completed;
-        yield todo.save();
-        res.send({ todo });
+        link.description = req.body.description;
+        link.title = req.body.title;
+        link.ownerId = req.body.ownerId;
+        link.url = req.body.url;
+        yield link.save();
+        res.send({ link });
     }));
     app.get("/me", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const authHeader = req.headers.authorization;
@@ -125,7 +126,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         res.send({ user });
     }));
     app.get("/", (_req, res) => {
-        res.send("hello");
+        res.send("Hello, This is pipfi backend.");
     });
     app.listen(3000, () => {
         console.log("listening on localhost:3000");

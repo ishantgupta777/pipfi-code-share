@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
-const Todo_1 = require("./Todo");
+const PipfiUrl_1 = require("./PipfiUrl");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -23,13 +23,25 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
 __decorate([
+    typeorm_1.Column("text", { nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "githubUserName", void 0);
+__decorate([
     typeorm_1.Column("text", { unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "githubId", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => Todo_1.Todo, (t) => t.creator),
+    typeorm_1.Column("text", { nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "avatarUrl", void 0);
+__decorate([
+    typeorm_1.Column("text", { nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "email", void 0);
+__decorate([
+    typeorm_1.OneToMany(() => PipfiUrl_1.PipfiUrl, (t) => t.owner),
     __metadata("design:type", Promise)
-], User.prototype, "todos", void 0);
+], User.prototype, "pipfiUrls", void 0);
 User = __decorate([
     typeorm_1.Entity()
 ], User);
