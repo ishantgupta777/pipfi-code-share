@@ -45,6 +45,13 @@ const pipfiApiCall = async(documentText:string,accessToken:string | undefined)=>
 export function activate(context: vscode.ExtensionContext) {
 	TokenManager.globalState = context.globalState;
 
+	const item = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right
+  );
+  item.text = "$(link) pipfi";
+  item.command = "pipfi--code-share-.sharedLinks";
+  item.show();
+
 	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.githubAuth', async () => {
 		await githubAuthentication(() => {
 			if(SharedLinksPanel._webview)
