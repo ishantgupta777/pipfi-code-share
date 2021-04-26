@@ -27,7 +27,7 @@ const main = async () => {
       {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/github/callback",
+        callbackURL: "https://pipfi.herokuapp.com/auth/github/callback",
       },
       async (_, __, profile, cb) => {
         console.log(profile._json,profile.displayName,profile.emails,profile.id,profile.profileUrl,profile.username,profile.photos)

@@ -35,7 +35,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     passport_1.default.use(new passport_github_1.Strategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/github/callback",
+        callbackURL: "https://pipfi.herokuapp.com/auth/github/callback",
     }, (_, __, profile, cb) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(profile._json, profile.displayName, profile.emails, profile.id, profile.profileUrl, profile.username, profile.photos);
         let user = yield User_1.UserData.findOne({ where: { githubId: profile.id } });
