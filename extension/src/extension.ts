@@ -1,6 +1,8 @@
+import { TokenManager } from './TokenManager';
 import * as vscode from 'vscode';
 import axios from 'axios';
 import SharedLinksPanel from './sharedLinks';
+import githubAuthentication from './githubAuthentication';
 const FormData = require('form-data');
 
 const OPEN_URL_OPTION = 'Open URL';
@@ -24,6 +26,11 @@ const pipfiApiCall = async(documentText:string)=>{
 };
 
 export function activate(context: vscode.ExtensionContext) {
+	TokenManager.globalState = context.globalState;
+
+	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.githubAuth', async () => {
+		await githubAuthentication();
+	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.shareCode', async () => {
 		const editor = vscode.window.activeTextEditor;

@@ -84,8 +84,8 @@ class SharedLinksPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
-				switch (message.command) {
-					case 'alert':
+				switch (message.type) {
+					case 'test':
 						vscode.window.showErrorMessage(message.text);
 						return;
 				}
@@ -150,6 +150,9 @@ class SharedLinksPanel {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${stylesResetUri}" rel="stylesheet">
 				<link href="${stylesMainUri}" rel="stylesheet">
+				<script nonce="${nonce}">
+				const tsvscode = acquireVsCodeApi();
+				</script>
 				<title>Pipfi (Share code)</title>
 			</head>
 			<body>
