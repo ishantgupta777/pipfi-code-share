@@ -26,21 +26,17 @@ const cors_1 = __importDefault(require("cors"));
 const Todo_1 = require("./entities/Todo");
 const isAuth_1 = require("./isAuth");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield typeorm_1.createConnection({
-            type: "postgres",
-            database: process.env.DATABASE_URL || "pipfi",
-            entities: [path_1.join(__dirname, "./entities/*.*")],
-            username: process.env.USERNAME || 'postgres',
-            password: process.env.PASSWORD || 'postgres',
-            port: 35432,
-            logging: !constants_1.__prod__,
-            synchronize: !constants_1.__prod__,
-        });
-    }
-    catch (err) {
-        console.log('error while connecting db', err);
-    }
+    yield typeorm_1.createConnection({
+        type: "postgres",
+        database: "pipfi",
+        entities: [path_1.join(__dirname, "./entities/*.*")],
+        username: process.env.USERNAME || 'postgres',
+        password: process.env.PASSWORD || 'postgres',
+        port: 5432,
+        host: 'postgres',
+        logging: !constants_1.__prod__,
+        synchronize: !constants_1.__prod__,
+    });
     const app = express_1.default();
     passport_1.default.serializeUser((user, done) => {
         done(null, user.accessToken);
