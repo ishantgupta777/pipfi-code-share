@@ -8,5 +8,6 @@ declare namespace NodeJS {
     USERNAME: string;
     PASSWORD: string;
     DATABASE: string;
+    SSL_ON: boolean
   }
 }

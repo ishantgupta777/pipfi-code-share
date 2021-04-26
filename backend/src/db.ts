@@ -14,6 +14,6 @@ export default async ()=>{
     host: process.env.HOST ||  'postgres',
     logging: !isProductionEnvironment,
     synchronize: !isProductionEnvironment,
-    ssl: isProductionEnvironment
+    ssl: process.env.SSL_ON
   })
 }
