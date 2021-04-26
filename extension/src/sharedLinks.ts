@@ -1,5 +1,7 @@
+import { TokenManager } from './TokenManager';
 import * as vscode from 'vscode';
 import { apiBaseUrl } from './constants';
+import githubAuthentication from './githubAuthentication';
 
 function getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewOptions {
 	return {
@@ -26,6 +28,7 @@ class SharedLinksPanel {
 	public static readonly viewType = 'sharedLinks';
 
 	private readonly _panel: vscode.WebviewPanel;
+	public static _webview: vscode.Webview | undefined;
 	private readonly _extensionUri: vscode.Uri;
 	private _disposables: vscode.Disposable[] = [];
 
@@ -63,6 +66,7 @@ class SharedLinksPanel {
 	private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
 		this._panel = panel;
 		this._extensionUri = extensionUri;
+		SharedLinksPanel._webview = undefined;
 
 		// Set the webview's initial html content
 		this._update();
@@ -86,9 +90,24 @@ class SharedLinksPanel {
 		this._panel.webview.onDidReceiveMessage(
 			message => {
 				switch (message.type) {
-					case 'test':
-						vscode.window.showErrorMessage(message.text);
+					case 'get-token':
+						if(SharedLinksPanel._webview)
+						{SharedLinksPanel._webview.postMessage({type: 'token',value: TokenManager.getToken()});}
 						return;
+					case "logout": {
+						TokenManager.setToken("");
+						break;
+					}
+					case "authenticate": {
+						githubAuthentication(() => {
+							if(SharedLinksPanel._webview)
+							{SharedLinksPanel._webview.postMessage({
+								type: "token",
+								value: TokenManager.getToken(),
+							});}
+						});
+						break;
+					}
 				}
 			},
 			null,
@@ -122,6 +141,7 @@ class SharedLinksPanel {
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {
+		SharedLinksPanel._webview = webview;
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'out/compiled', 'SharedLinks.js');
 
@@ -147,13 +167,16 @@ class SharedLinksPanel {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${stylesResetUri}" rel="stylesheet">
 				<link href="${stylesMainUri}" rel="stylesheet">
 				<script nonce="${nonce}">
 				const tsvscode = acquireVsCodeApi();
 				const apiBaseUrl = ${JSON.stringify(apiBaseUrl)}
+				const accessToken = ${JSON.stringify(TokenManager.getToken())}
 				</script>
 				<title>Pipfi (Share code)</title>
 			</head>

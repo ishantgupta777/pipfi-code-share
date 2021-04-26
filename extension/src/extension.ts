@@ -46,7 +46,13 @@ export function activate(context: vscode.ExtensionContext) {
 	TokenManager.globalState = context.globalState;
 
 	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.githubAuth', async () => {
-		await githubAuthentication();
+		await githubAuthentication(() => {
+			if(SharedLinksPanel._webview)
+			{SharedLinksPanel._webview.postMessage({
+				type: "token",
+				value: TokenManager.getToken(),
+			});}
+		});
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.shareCode', async () => {

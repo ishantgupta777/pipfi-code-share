@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { User } from "../types";
-import PipfiLink from "./PipfiLink.svelte";
+  import PipfiLinks from "./PipfiLinks.svelte";
   let accessToken = "";
   let loading = true;
   let user: User | null = null;
@@ -20,19 +20,32 @@ import PipfiLink from "./PipfiLink.svelte";
                   const data = await response.json();
                   user = data.user;
                   loading = false;
+                  console.log(user,'user ka data')
+                  return
           }
       });
       tsvscode.postMessage({ type: "get-token", value: undefined });
   });
 </script>
 
-<h1>hello ishant13</h1>
+<h1>Hello {user?.name || 'User'}</h1>
 
-<button on:click={()=>{
-  tsvscode.postMessage({
-    type: 'test',
-    value: 'fafa come'
-  })
-}}>Login to Github</button>
-
-<PipfiLink />
+{#if loading}
+  <p>Loading data... Please wait...</p>
+{:else}
+  {#if user}
+  <button
+        on:click={() => {
+            accessToken = '';
+            user = null;
+            tsvscode.postMessage({ type: 'logout', value: undefined });
+        }}>logout</button>
+    <PipfiLinks {user} {accessToken} />
+  {:else}
+  <p>Please login with GitHub to sync your pipfi history.</p>
+    <button
+    on:click={() => {
+        tsvscode.postMessage({ type: 'authenticate', value: undefined });
+    }}>login with GitHub</button>
+  {/if}
+{/if}
