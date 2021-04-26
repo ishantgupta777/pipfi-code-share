@@ -24,6 +24,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         host: process.env.HOST || 'postgres',
         logging: !isProductionEnvironment,
         synchronize: !isProductionEnvironment,
+        extra: { ssl: process.env.SSL_ON == 'true' }
     });
 });
 //# sourceMappingURL=db.js.map
