@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { apiBaseUrl } from './constants';
 
 function getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewOptions {
 	return {
@@ -152,6 +153,7 @@ class SharedLinksPanel {
 				<link href="${stylesMainUri}" rel="stylesheet">
 				<script nonce="${nonce}">
 				const tsvscode = acquireVsCodeApi();
+				const apiBaseUrl = ${JSON.stringify(apiBaseUrl)}
 				</script>
 				<title>Pipfi (Share code)</title>
 			</head>

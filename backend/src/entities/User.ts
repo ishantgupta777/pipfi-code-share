@@ -8,7 +8,7 @@ import {
 import { PipfiUrl } from "./PipfiUrl";
 
 @Entity()
-export class User extends BaseEntity {
+export class UserData extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

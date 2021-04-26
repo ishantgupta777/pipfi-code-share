@@ -9,41 +9,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.UserData = void 0;
 const typeorm_1 = require("typeorm");
 const PipfiUrl_1 = require("./PipfiUrl");
-let User = class User extends typeorm_1.BaseEntity {
+let UserData = class UserData extends typeorm_1.BaseEntity {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], User.prototype, "id", void 0);
+], UserData.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column("text", { nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "name", void 0);
+], UserData.prototype, "name", void 0);
 __decorate([
     typeorm_1.Column("text", { nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "githubUserName", void 0);
+], UserData.prototype, "githubUserName", void 0);
 __decorate([
     typeorm_1.Column("text", { unique: true }),
     __metadata("design:type", String)
-], User.prototype, "githubId", void 0);
+], UserData.prototype, "githubId", void 0);
 __decorate([
     typeorm_1.Column("text", { nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "avatarUrl", void 0);
+], UserData.prototype, "avatarUrl", void 0);
 __decorate([
     typeorm_1.Column("text", { nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "email", void 0);
+], UserData.prototype, "email", void 0);
 __decorate([
     typeorm_1.OneToMany(() => PipfiUrl_1.PipfiUrl, (t) => t.owner),
     __metadata("design:type", Promise)
-], User.prototype, "pipfiUrls", void 0);
-User = __decorate([
+], UserData.prototype, "pipfiUrls", void 0);
+UserData = __decorate([
     typeorm_1.Entity()
-], User);
-exports.User = User;
+], UserData);
+exports.UserData = UserData;
 //# sourceMappingURL=User.js.map

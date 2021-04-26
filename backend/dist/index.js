@@ -38,7 +38,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         callbackURL: "http://localhost:3000/auth/github/callback",
     }, (_, __, profile, cb) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(profile._json, profile.displayName, profile.emails, profile.id, profile.profileUrl, profile.username, profile.photos);
-        let user = yield User_1.User.findOne({ where: { githubId: profile.id } });
+        let user = yield User_1.UserData.findOne({ where: { githubId: profile.id } });
         if (user) {
             user.name = profile.displayName;
             user.githubUserName = profile.username || "";
@@ -48,7 +48,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             yield user.save();
         }
         else {
-            user = yield User_1.User.create({
+            user = yield User_1.UserData.create({
                 name: profile.displayName,
                 githubId: profile.id,
                 githubUserName: profile.username,
@@ -122,7 +122,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             res.send({ user: null });
             return;
         }
-        const user = yield User_1.User.findOne(userId);
+        const user = yield User_1.UserData.findOne(userId);
         res.send({ user });
     }));
     app.get("/", (_req, res) => {

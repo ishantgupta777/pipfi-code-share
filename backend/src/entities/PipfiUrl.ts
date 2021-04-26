@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./User";
+import { UserData } from "./User";
 
 @Entity()
 export class PipfiUrl extends BaseEntity {
@@ -25,7 +25,7 @@ export class PipfiUrl extends BaseEntity {
   @Column()
   ownerId: number;
 
-  @ManyToOne(() => User, (u) => u.pipfiUrls)
+  @ManyToOne(() => UserData, (u) => u.pipfiUrls)
   @JoinColumn({ name: "ownerId" })
-  owner: Promise<User>;
+  owner: Promise<UserData>;
 }

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 require("dotenv-safe").config();
 import express from "express";
-import { User } from "./entities/User";
+import { UserData } from "./entities/User";
 import { Strategy as GitHubStrategy } from "passport-github";
 import passport from "passport";
 import jwt from "jsonwebtoken";
@@ -31,7 +31,7 @@ const main = async () => {
       },
       async (_, __, profile, cb) => {
         console.log(profile._json,profile.displayName,profile.emails,profile.id,profile.profileUrl,profile.username,profile.photos)
-        let user = await User.findOne({ where: { githubId: profile.id } });
+        let user = await UserData.findOne({ where: { githubId: profile.id } });
         if (user) {
           user.name = profile.displayName;
           user.githubUserName = profile.username || "";
@@ -40,7 +40,7 @@ const main = async () => {
           user.githubId = profile.id;
           await user.save();
         } else {
-          user = await User.create({
+          user = await UserData.create({
             name: profile.displayName,
             githubId: profile.id,
             githubUserName: profile.username,
@@ -136,7 +136,7 @@ const main = async () => {
       return;
     }
 
-    const user = await User.findOne(userId);
+    const user = await UserData.findOne(userId);
 
     res.send({ user });
   });
