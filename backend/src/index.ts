@@ -13,20 +13,17 @@ import { Todo } from "./entities/Todo";
 import { isAuth } from "./isAuth";
 
 const main = async () => {
-  try{
-    await createConnection({
-      type: "postgres",
-      database: process.env.DATABASE_URL || "pipfi",
-      entities: [join(__dirname, "./entities/*.*")],
-      username: process.env.USERNAME || 'postgres',
-      password: process.env.PASSWORD || 'postgres',
-      port: 35432,
-      logging: !__prod__,
-      synchronize: !__prod__,
-    });
-  }catch(err) {
-    console.log('error while connecting db',err)
-  }
+  await createConnection({
+    type: "postgres",
+    database:  "pipfi",
+    entities: [join(__dirname, "./entities/*.*")],
+    username: process.env.USERNAME || 'postgres',
+    password: process.env.PASSWORD || 'postgres',
+    port: 5432,
+    host: 'postgres',
+    logging: !__prod__,
+    synchronize: !__prod__,
+  });
 
   // const user = await User.create({ name: "bob" }).save();
 
