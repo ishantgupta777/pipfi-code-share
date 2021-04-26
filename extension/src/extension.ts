@@ -3,18 +3,35 @@ import * as vscode from 'vscode';
 import axios from 'axios';
 import SharedLinksPanel from './sharedLinks';
 import githubAuthentication from './githubAuthentication';
+import { apiBaseUrl } from './constants';
 const FormData = require('form-data');
 
 const OPEN_URL_OPTION = 'Open URL';
 
-const pipfiApiCall = async(documentText:string)=>{
+const pipfiApiCall = async(documentText:string,accessToken:string | undefined)=>{
 	let formData = new FormData();
 	formData.append('paste', documentText);
 	const headers = formData.getHeaders();
 
 	try{
+		let input = await vscode.window.showInputBox({placeHolder: "Enter info about code."});
+		if(!input) {input = "";};
+
 		const apiResponse = await axios.post("https://p.ip.fi/",formData,{headers});
 		await vscode.env.clipboard.writeText(apiResponse.data);
+		try{
+			await axios.post(`${apiBaseUrl}/addLink`,{
+				title: input,
+				url: apiResponse.data,
+				description:""
+			},{
+				headers: {
+					authorization: `Bearer ${accessToken}`,
+				}
+			});
+		}catch(err){
+			console.log(err,'error while making api call to server');
+		}
 		const selection = await vscode.window.showInformationMessage(("URL copied to clipboard.\n" + apiResponse.data),OPEN_URL_OPTION);
 		if(selection === OPEN_URL_OPTION){
 			vscode.env.openExternal(vscode.Uri.parse(apiResponse.data));
@@ -38,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		let document = editor.document;
 		const documentText = document.getText();
-		pipfiApiCall(documentText);
+		pipfiApiCall(documentText,TokenManager.getToken());
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.shareSelectedCode',async ()=>{
@@ -48,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
 		let document = editor.document;
 		const selection = editor.selection;
 		const documentText = document.getText(selection);
-		pipfiApiCall(documentText);
+		pipfiApiCall(documentText,TokenManager.getToken());
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('pipfi--code-share-.sharedLinks',async ()=>{

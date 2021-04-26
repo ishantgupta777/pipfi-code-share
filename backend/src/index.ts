@@ -72,22 +72,32 @@ const main = async () => {
   );
 
   app.get("/links", isAuth, async (req, res) => {
-    const links = await PipfiUrl.find({
-      where: { ownerId: req.userId },
-      order: { id: "DESC" },
-    });
-
-    res.send({ links });
+    try{
+      const links = await PipfiUrl.find({
+        where: { ownerId: req.userId },
+        order: { id: "DESC" },
+      });
+  
+      res.send({ links });
+    }catch(err){
+      console.log(err)
+      res.status(500).send({message:'Error in server while getting links'})
+    }
   });
 
   app.post("/addLink", isAuth, async (req, res) => {
-    const link = await PipfiUrl.create({
-      title: req.body.title,
-      description: req.body.description,
-      ownerId: req.userId,
-      url: req.body.url
-    }).save();
-    res.send({ link });
+    try{
+      const link = await PipfiUrl.create({
+        title: req.body.title,
+        description: req.body.description,
+        url: req.body.url,
+        ownerId: req.userId
+      }).save();
+      res.send({ link });
+    }catch(err){
+      console.log(err)
+      res.status(500).send({message:'Error in server while adding new link'})
+    }
   });
 
   app.put("/updateLink", isAuth, async (req, res) => {
@@ -97,7 +107,7 @@ const main = async () => {
       return;
     }
     if (link.ownerId !== req.userId) {
-      throw new Error("not authorized");
+      res.status(401).send({message:'Not authorized'})
     }
     link.description = req.body.description;
     link.title = req.body.title;
@@ -108,37 +118,41 @@ const main = async () => {
   });
 
   app.get("/me", async (req, res) => {
-    // Bearer 120jdklowqjed021901
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      res.send({ user: null });
-      return;
+    try{
+      // Bearer 120jdklowqjed021901
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        res.send({ user: null });
+        return;
+      }
+
+      const token = authHeader.split(" ")[1];
+      if (!token) {
+        res.send({ user: null });
+        return;
+      }
+
+      let userId = "";
+
+      try {
+        const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        userId = payload.userId;
+      } catch (err) {
+        res.send({ user: null });
+        return;
+      }
+
+      if (!userId) {
+        res.send({ user: null });
+        return;
+      }
+
+      const user = await UserData.findOne(userId);
+
+      res.send({ user });
+    }catch(err){
+      res.status(500).send('Error in server while getting user data')
     }
-
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      res.send({ user: null });
-      return;
-    }
-
-    let userId = "";
-
-    try {
-      const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-      userId = payload.userId;
-    } catch (err) {
-      res.send({ user: null });
-      return;
-    }
-
-    if (!userId) {
-      res.send({ user: null });
-      return;
-    }
-
-    const user = await UserData.findOne(userId);
-
-    res.send({ user });
   });
 
   app.get("/", (_req, res) => {
