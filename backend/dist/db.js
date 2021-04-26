@@ -20,7 +20,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         entities: [path_1.join(__dirname, "./entities/*.*")],
         username: process.env.USERNAME || 'postgres',
         password: process.env.PASSWORD || 'postgres',
-        port: parseInt(process.env.PORT) || 5432,
+        port: 5432,
         host: process.env.HOST || 'postgres',
         logging: !isProductionEnvironment,
         synchronize: !isProductionEnvironment,

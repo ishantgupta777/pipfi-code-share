@@ -159,7 +159,7 @@ const main = async () => {
     res.send("Hello, This is pipfi backend.");
   });
 
-  app.listen(3000, () => {
+  app.listen(process.env.PORT || 3000, () => {
     console.log("listening on localhost:3000");
   });
 };
