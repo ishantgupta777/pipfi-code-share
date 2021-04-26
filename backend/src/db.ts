@@ -10,7 +10,7 @@ export default async ()=>{
     entities: [join(__dirname, "./entities/*.*")],
     username: process.env.USERNAME || 'postgres',
     password: process.env.PASSWORD || 'postgres',
-    port: 5432,
+    port: parseInt(process.env.PORT) || 5432,
     host: process.env.HOST ||  'postgres',
     logging: !isProductionEnvironment,
     synchronize: !isProductionEnvironment,

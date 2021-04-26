@@ -9,5 +9,6 @@ declare namespace NodeJS {
     PASSWORD: string;
     DATABASE: string;
     SSL_ON: string;
+    PORT: string;
   }
 }
